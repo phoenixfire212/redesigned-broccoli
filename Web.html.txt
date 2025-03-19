@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Website with Chatbot</title>
+
+<style>
+/* General Styling */
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 0;
+background-color: #f4f4f4;
+transition: background 0.5s, color 0.5s;
+}
+header {
+background: #0073e6;
+color: white;
+padding: 15px;
+text-align: center;
+}
+nav {
+display: flex;
+justify-content: center;
+background: #005bb5;
+padding: 10px;
+}
+nav a {
+color: white;
+text-decoration: none;
+padding: 10px 20px;
+transition: background 0.3s;
+}
+nav a:hover {
+background: #004494;
+}
+.container {
+padding: 20px;
+text-align: center;
+}
+
+/* Chatbot Styles */
+#chatbot {
+width: 300px;
+height: 400px;
+border: 1px solid #ccc;
+background: white;
+margin: 20px auto;
+padding: 10px;
+overflow-y: scroll;
+}
+.chat-input {
+width: 90%;
+padding: 8px;
+margin: 10px auto;
+display: block;
+}
+.bot-message {
+background: #ddd;
+padding: 5px;
+margin: 5px;
+text-align: left;
+}
+.user-message {
+background: #0073e6;
+color: white;
+padding: 5px;
+margin: 5px;
+text-align: right;
+}
+
+/* Footer */
+footer {
+background: #005bb5;
+color: white;
+text-align: center;
+padding: 10px;
+position: fixed;
+bottom: 0;
+width: 100%;
+}
+</style>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+<script>
+// Firebase Configuration
+const firebaseConfig = {
+apiKey: "AIzaSyAtTqpyk5t4KNysbDmL-PpLUorz2DNuHdI",
+authDomain: "woww-39d1d.firebaseapp.com",
+projectId: "woww-39d1d",
+storageBucket: "woww-39d1d.appspot.com",
+messagingSenderId: "90418321324",
+appId: "1:90418321324:web:d5d5f78560a2e10e650c09",
+measurementId: "G-JTFQ7C1HHK"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+function signInAnonymously() {
+firebase.auth().signInAnonymously()
+.then(() => {
+alert("Signed in as Guest!");
+})
+.catch((error) => {
+console.error("Error signing in:", error);
+});
+}
+
+function saveMessage() {
+let message = document.getElementById("message").value;
+db.collection("messages").add({
+text: message,
+timestamp: firebase.firestore.FieldValue.serverTimestamp()
+}).then(() => {
+alert("Message saved!");
+document.getElementById("message").value = "";
+}).catch((error) => {
+console.error("Error saving message:", error);
+});
+}
+
+// Basic Chatbot
+function sendMessage() {
+let userInput = document.getElementById("chatInput").value;
+if (userInput.trim() === "") return;
+
+let chatbox = document.getElementById("chatbot");
+let userMsg = `<div class='user-message'>${userInput}</div>`;
+chatbox.innerHTML += userMsg;
+
+let botReply = getBotResponse(userInput);
+setTimeout(() => {
+chatbox.innerHTML += `<div class='bot-message'>${botReply}</div>`;
+chatbox.scrollTop = chatbox.scrollHeight;
+}, 500);
+
+document.getElementById("chatInput").value = "";
+}
+
+function getBotResponse(input) {
+let responses = {
+"hello": "Hi there! How can I help?",
+"how are you": "I'm just a bot, but I'm doing great!",
+"bye": "Goodbye! Have a great day!",
+"your name": "I'm a simple chatbot.",
+"what can you do": "I can chat with you! Try asking me anything.",
+};
+
+return responses[input.toLowerCase()] || "I don't understand that. Try asking something else!";
+}
+</script>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+<h1>My Website with Chatbot</h1>
+</header>
+
+<!-- Navigation Bar -->
+<nav>
+<a href="#">Home</a>
+<a href="#" onclick="signInAnonymously()">Sign in Anonymously</a>
+<a href="#">Contact</a>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+<h2>Welcome to My Website</h2>
+<p>Explore our chatbot and features.</p>
+
+<!-- Chatbot Section -->
+<h3>Chat with Our Bot</h3>
+<div id="chatbot"></div>
+<input type="text" id="chatInput" class="chat-input" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') sendMessage()">
+<button onclick="sendMessage()">Send</button>
+
+<!-- Message Saving Feature -->
+<h3>Leave a Message</h3>
+<input type="text" id="message" placeholder="Write your message here">
+<button onclick="saveMessage()">Save Message</button>
+</div>
+
+<!-- Footer -->
+<footer>
+<p>© 2025 My Website. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
